@@ -1,0 +1,2 @@
+allow sdcardd shell_exec file { read execute getattr }
+allow sdcardd sdcardd_exec file { execute_no_trans }

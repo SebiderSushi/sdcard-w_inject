@@ -1,0 +1,6 @@
+id=sdcard-w_inject
+name=SDCard R/W
+version=1.0.0
+versionCode=1
+author=SebiderSushi
+description=Inject "-w" to /system/bin/sdcard

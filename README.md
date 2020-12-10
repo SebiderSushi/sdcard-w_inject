@@ -12,7 +12,9 @@ I am not responsible for your actions.
 This module is aimed at enabling "legacy SD Card write access".
 It does so by injecting the `-w` parameter whenever the binary `/system/bin/sdcard` is executed.
 This binary is used in AOSP to mount the SD Card or your "internal shared storage" in a way that emulates an sdcard-style filesystem. That is, a filesystem without file ownership and other troubles, so that applications can all happily read and write.
-In its original AOSP implementation this binary has a `-w` switch that enables write access on the emulated directory. This option is usually ommitted if android mounts SD Cards. Googles reasoning behind this is unknown to me.
+In its original AOSP implementation this binary has a `-w` switch that enables write access on the emulated directory. This option is usually ommitted if android mounts SD Cards.
+
+**Warning:** Using the `-w` switch on `/system/bin/sdcard` causes the SD Card to become entirely unavailable to secondary device users, as it is intended for use with the internal shared storage, which of course is private and thus segregated between all device users. Usually all users were at least able to give their apps legacy SD Card read access. Using this method **only the "Device owner" will be able to access the SD Card at all.** There is nothing that can be done about this when using this naive and hacky approach.
 
 ## When can i use this
 **TL;DR: The easiest way to find out is to try.**  
@@ -32,8 +34,11 @@ If your internal storage or SD Card are inaccessible after reboot, this module w
 Either use Magisk Manager to remove the module or create a file named `disable` in the module directory under `/data/adb/modules/` and reboot. After that, everything should return to normal and you should be able to use Magisk Manager to remove the module completely.
 
 ## Report issues / incompatibilities
-If this module did not work for you and you decide to report this as an issue, make sure you include the following:  
+If this module did not work for you even though your system does have a binary at `/system/bin/sdcard`, chances are it's just an SELinux issue. In that case, the sepolicy patch included with this module must be fixed. To find out how it must be fixed, some log information is necessary.
+
+If you decide to report any issues, make sure you include the following:  
 (Boot with the module installed before gathering any of the mentioned data)
 - The (contents of the) file `postfsdata.log` in the module directory under `/data/adb/modules/`
-- Output of `logcat` (if you have privacy concerns, `logcat | grep sdcard` and `logact | grep vold` might be enough
+- Output of `ls -Zal /system/bin/`
+- Output of `logcat -d` (if you have privacy concerns, `logcat -d | grep sdcard` and `logact -d | grep vold` might be enough
 - Output of `dmesg` (if you have privacy concerns, `dmesg | grep denied` might be enough
